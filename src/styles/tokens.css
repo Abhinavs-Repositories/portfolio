@@ -1,0 +1,11 @@
+:root {
+  --bone: #f4f1ea;
+  --bone-deep: #ece7dc;
+  --ink: #16140f;
+  --ink-soft: #3a3730;
+  --amber: #c8862b;
+  --amber-bright: #e0a040;
+  --line: rgba(22, 20, 15, 0.12);
+  --serif: 'Fraunces', Georgia, serif;
+  --grotesk: 'Familjen Grotesk', system-ui, sans-serif;
+}

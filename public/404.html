@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Off course</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,400&family=Familjen+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bone:#f4f1ea; --ink:#16140f; --ink-soft:#3a3730; --amber:#c8862b; --line:rgba(22,20,15,.12);
+    --serif:'Fraunces',Georgia,serif; --grotesk:'Familjen Grotesk',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:var(--bone);color:var(--ink);font-family:var(--grotesk);min-height:100vh}
+  a{color:inherit;text-decoration:none}
+  .page{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 6vw}
+  .num{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--amber);margin-bottom:18px;letter-spacing:.04em}
+  h1{font-family:var(--serif);font-weight:300;font-size:clamp(3rem,9vw,8rem);line-height:.95;letter-spacing:-.02em;margin-bottom:24px}
+  h1 em{font-style:italic;color:var(--amber)}
+  p{font-size:clamp(1rem,1.4vw,1.18rem);line-height:1.6;color:var(--ink-soft);max-width:520px;margin-bottom:48px}
+  a.back{display:inline-block;font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid var(--ink);transition:.4s;width:max-content}
+  a.back:hover{color:var(--amber);border-color:var(--amber);padding-left:8px}
+  footer{padding:40px 6vw;border-top:1px solid var(--line);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+  <div class="page">
+    <span class="num">404 · Off course</span>
+    <h1>This page <em>doesn't ship.</em></h1>
+    <p>The page you were looking for isn't here. Could be a typo, a stale link, or something I haven't built yet.</p>
+    <a class="back" href="/">← Back to the runway</a>
+  </div>
+  <footer>
+    <span>© 2026 Abhinav Singh</span>
+    <span>Built with intent</span>
+  </footer>
+</body>
+</html>
