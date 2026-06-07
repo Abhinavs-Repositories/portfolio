@@ -13,3 +13,5 @@ dist-ssr
 *.md
 prototype.html
 .claude/
+
+.vercel

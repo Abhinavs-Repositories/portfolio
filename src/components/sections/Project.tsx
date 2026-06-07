@@ -1,18 +1,30 @@
+import { useEffect, useRef } from 'react';
 import type { Project, DataArtKey } from '../../content/site';
-import { RetrievalField } from '../dataart/RetrievalField';
-import { AgentOrchestration } from '../dataart/AgentOrchestration';
-import { MessageTraffic } from '../dataart/MessageTraffic';
-import { CircuitTelemetry } from '../dataart/CircuitTelemetry';
+import { registerProjectView, setProjectHover, type ProjectViewEntry } from '../../three/projectViewsStore';
 
-const ART_MAP: Record<DataArtKey, () => JSX.Element> = {
-  RetrievalField,
-  AgentOrchestration,
-  MessageTraffic,
-  CircuitTelemetry,
+// Each project's dataArt key maps to a 3D object kind in the projects canvas.
+const KIND_BY_DATAART: Record<DataArtKey, ProjectViewEntry['kind']> = {
+  RetrievalField: 'RetrievalManifold',
+  AgentOrchestration: 'StateMachine',
+  MessageTraffic: 'TokenRiver',
+  CircuitTelemetry: 'RacingLine',
 };
 
 export function ProjectRow({ project }: { project: Project }) {
-  const Art = ART_MAP[project.dataArt];
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const unregister = registerProjectView({
+      id: project.id,
+      panelRef,
+      kind: KIND_BY_DATAART[project.dataArt],
+    });
+    return unregister;
+  }, [project.id, project.dataArt]);
+
+  const onEnter = () => setProjectHover(project.id, true);
+  const onLeave = () => setProjectHover(project.id, false);
+
   return (
     <div className="project">
       <div className="project-body">
@@ -27,11 +39,13 @@ export function ProjectRow({ project }: { project: Project }) {
         </div>
       </div>
       <div
+        ref={panelRef}
         className="visual"
         role="img"
         aria-label={`${project.title} — interactive visual: ${project.metric.value} ${project.metric.label}`}
+        onPointerEnter={onEnter}
+        onPointerLeave={onLeave}
       >
-        <Art />
         <div className="metric" aria-hidden="true">
           {project.metric.value}
           <small>{project.metric.label}</small>

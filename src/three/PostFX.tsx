@@ -10,7 +10,8 @@ import * as THREE from 'three';
 import { scrollState } from '../lib/scrollStore';
 
 // Library-driven equivalent of the prototype's hand-rolled composite pass.
-// Aberration is driven by scrollState.velocity (already smoothed in CameraRig).
+// Aberration: base velocity-driven jitter + transient `aberrationBoost` pulses
+// at section boundaries (set by MotionRoot's ScrollTrigger callbacks).
 export function PostFX() {
   const aberrRef = useRef<{ offset: THREE.Vector2 } | null>(null);
 
@@ -18,8 +19,8 @@ export function PostFX() {
     const ca = aberrRef.current;
     if (!ca) return;
     const v = scrollState.reducedMotion ? 0 : scrollState.velocity;
-    // Tiny base offset so subtle aberration is always present; velocity drives the kick.
-    const mag = 0.0008 + v * 0.004;
+    const boost = scrollState.reducedMotion ? 0 : scrollState.aberrationBoost;
+    const mag = 0.0008 + v * 0.004 + boost * 0.006;
     ca.offset.set(mag, mag);
   });
 

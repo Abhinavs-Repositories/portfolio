@@ -8,4 +8,29 @@
   --line: rgba(22, 20, 15, 0.12);
   --serif: 'Fraunces', Georgia, serif;
   --grotesk: 'Familjen Grotesk', system-ui, sans-serif;
+
+  /* Semantic surface/text vars — DOM uses these so the world can invert. */
+  --bg: var(--bone);
+  --bg-deep: var(--bone-deep);
+  --fg: var(--ink);
+  --fg-soft: var(--ink-soft);
+  --line-on-bg: rgba(22, 20, 15, 0.12);
+}
+
+/* The same scroll trigger that drives uInvert in the shader toggles this class,
+   so the shader and DOM flip together over ~1.5s. */
+body.inverted {
+  --bg: var(--ink);
+  --bg-deep: #0d0c08;
+  --fg: var(--bone);
+  --fg-soft: #b8b3a6;
+  --line-on-bg: rgba(244, 241, 234, 0.14);
+}
+
+/* Tween the dependent properties (browsers won't tween custom props themselves). */
+body, .contact, .project, .stats, footer, .topbar nav a {
+  transition:
+    background-color 1.5s cubic-bezier(0.7, 0, 0.2, 1),
+    color 1.5s cubic-bezier(0.7, 0, 0.2, 1),
+    border-color 1.5s cubic-bezier(0.7, 0, 0.2, 1);
 }

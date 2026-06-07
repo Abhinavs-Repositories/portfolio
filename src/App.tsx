@@ -12,6 +12,10 @@ import { footerCopy } from './content/site';
 
 // Code-split the 3D scene (three + r3f + postprocessing is most of the bundle).
 const Scene = lazy(() => import('./three/Scene').then((m) => ({ default: m.Scene })));
+// Second WebGL context: hosts the four project objects via drei <View>.
+const ProjectsCanvas = lazy(() =>
+  import('./three/ProjectsCanvas').then((m) => ({ default: m.ProjectsCanvas })),
+);
 
 export default function App() {
   const [started, setStarted] = useState(false);
@@ -23,6 +27,9 @@ export default function App() {
         <Scene />
       </Suspense>
       <MotionRoot start={started} />
+      <Suspense fallback={null}>
+        <ProjectsCanvas />
+      </Suspense>
       <div className="progress" id="progress" />
       <Nav />
       <div className="wrap">

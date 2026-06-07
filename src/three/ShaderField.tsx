@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { scrollState } from '../lib/scrollStore';
+import { effectiveMouse, scrollState } from '../lib/scrollStore';
 
 // Ported verbatim from the prototype: 5-octave FBM + cursor warp + scroll drift.
 const vertexShader = /* glsl */ `
@@ -12,6 +12,8 @@ const vertexShader = /* glsl */ `
   }
 `;
 
+// uInvert (0..1) interpolates the entire palette toward dark: bone↔ink swap so
+// the whole world flips together with the body.inverted class on contact.
 const fragmentShader = /* glsl */ `
   precision highp float;
   varying vec2 vUv;
@@ -22,6 +24,7 @@ const fragmentShader = /* glsl */ `
   uniform vec3 uBone;
   uniform vec3 uAmber;
   uniform vec3 uInk;
+  uniform float uInvert;
 
   vec2 hash(vec2 p) {
     p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
@@ -48,6 +51,8 @@ const fragmentShader = /* glsl */ `
     return v;
   }
   void main() {
+    vec3 bg = mix(uBone, uInk, uInvert);
+    vec3 fg = mix(uInk, uBone, uInvert);
     vec2 uv = vUv;
     vec2 md = (uv - uMouse);
     md.x *= uAspect;
@@ -59,13 +64,13 @@ const fragmentShader = /* glsl */ `
     float t = uTime * 0.05;
     float q = fbm(p + vec2(t, t * 0.3));
     float n = fbm(p + q * 1.4 + vec2(-t * 0.6, t * 0.2));
-    vec3 col = uBone;
-    col = mix(col, uInk, smoothstep(0.2, 0.95, n) * 0.10);
+    vec3 col = bg;
+    col = mix(col, fg, smoothstep(0.2, 0.95, n) * 0.10);
     float ridge = smoothstep(0.34, 0.66, q) * smoothstep(0.92, 0.5, q);
     col = mix(col, uAmber, ridge * 0.17);
     col = mix(col, uAmber, cursor * 0.10);
     float vig = smoothstep(1.25, 0.15, length(uv - 0.5));
-    col = mix(uBone, col, 0.82 + 0.18 * vig);
+    col = mix(bg, col, 0.82 + 0.18 * vig);
     gl_FragColor = vec4(col, 1.0);
   }
 `;
@@ -85,6 +90,7 @@ export function ShaderField() {
       uBone: { value: new THREE.Color('#f4f1ea') },
       uAmber: { value: new THREE.Color('#c8862b') },
       uInk: { value: new THREE.Color('#16140f') },
+      uInvert: { value: 0 },
     }),
     // intentionally compute only once; we update uAspect in useFrame on resize
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,8 +103,10 @@ export function ShaderField() {
     const u = m.uniforms as typeof uniforms;
     u.uTime.value = scrollState.reducedMotion ? 0 : state.clock.elapsedTime;
     u.uScroll.value = scrollState.reducedMotion ? 0 : scrollState.progress;
-    u.uMouse.value.set(scrollState.mouseX, scrollState.mouseY);
+    const mouse = effectiveMouse();
+    u.uMouse.value.set(mouse.x, mouse.y);
     u.uAspect.value = state.size.width / state.size.height;
+    u.uInvert.value = scrollState.invert;
   });
 
   return (
